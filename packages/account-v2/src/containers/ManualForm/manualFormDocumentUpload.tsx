@@ -1,6 +1,6 @@
 import React from 'react';
-import { Dropzone } from '../../components/base/Dropzone';
 import { WalletText } from '../../components/base/WalletText';
+import { Dropzone } from '../../components/Dropzone';
 import { TManualDocumentTypes } from '../../constants/manualFormConstants';
 import { getTitleForDocumentUpload, getUploadConfig } from '../../utils/manualFormUtils';
 
@@ -21,6 +21,7 @@ export const ManualFormDocumentUpload = ({ selectedDocument }: TManualFormDocume
                             fileFormats={['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf']}
                             icon={upload.fileUploadIcon}
                             maxSize={8388608}
+                            onFileChange={file => console.log(file.name)}
                         />
                     </div>
                 ))}
