@@ -22,17 +22,19 @@ export const getManualFormValidationSchema = (selectedDocument: TManualDocumentT
     return Yup.object({
         document_expiry: Yup.string().required(fieldsData.documentExpiry.errorMessage),
         document_number: Yup.string().required(fieldsData.documentNumber.errorMessage),
-    });
+    }).default(() => ({ document_expiry: '', document_number: '' }));
 };
 
 export const getSelfieValidationSchema = () => {
     return Yup.object({
-        [MANUAL_DOCUMENT_TYPES.SELFIE]: Yup.mixed().test({
-            message: 'File is required',
-            name: 'file',
-            test: value => {
-                return value && value instanceof File;
-            },
-        }),
-    });
+        [MANUAL_DOCUMENT_TYPES.SELFIE]: Yup.mixed<File | null>()
+            .test({
+                message: 'File is required',
+                name: 'file',
+                test: value => {
+                    return !!value && value instanceof File;
+                },
+            })
+            .required(),
+    }).default(() => ({ [MANUAL_DOCUMENT_TYPES.SELFIE]: null }));
 };

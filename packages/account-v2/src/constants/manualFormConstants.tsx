@@ -16,11 +16,6 @@ export const MANUAL_DOCUMENT_TYPES = Object.freeze({
     SELFIE: 'selfie_with_id',
 });
 
-export const MANUAL_FORM_INITIAL_VALUES = Object.freeze({
-    document_expiry: '',
-    document_number: '',
-});
-
 const documentExpiry = {
     errorMessage: 'Expiry date is required.',
     label: 'Expiry date',
