@@ -4,7 +4,7 @@ import { InferType } from 'yup';
 import { Button, Text, useDevice } from '@deriv-com/ui';
 import SelfieIcon from '../../assets/manual-upload/selfie-icon.svg';
 import { Dropzone } from '../../components/Dropzone';
-import { MANUAL_DOCUMENT_TYPES } from '../../constants/manualFormConstants';
+import { MANUAL_DOCUMENT_SELFIE } from '../../constants/manualFormConstants';
 import { getSelfieValidationSchema } from '../../utils/manualFormUtils';
 
 type TSelfieFormValue = InferType<ReturnType<typeof getSelfieValidationSchema>>;
@@ -21,8 +21,7 @@ export const SelfieDocumentUpload = ({ formData, handleCancel, handleSubmit }: T
     const validationSchema = getSelfieValidationSchema();
 
     const initialVal = validationSchema.cast({
-        [MANUAL_DOCUMENT_TYPES.SELFIE]:
-            formData[MANUAL_DOCUMENT_TYPES.SELFIE] ?? validationSchema.getDefault().selfie_with_id,
+        [MANUAL_DOCUMENT_SELFIE]: formData[MANUAL_DOCUMENT_SELFIE] ?? validationSchema.getDefault().selfie_with_id,
     });
 
     return (
@@ -42,7 +41,7 @@ export const SelfieDocumentUpload = ({ formData, handleCancel, handleSubmit }: T
                             fileFormats='image/*'
                             hasFrame
                             icon={<SelfieIcon />}
-                            onFileChange={(file: File) => setFieldValue(MANUAL_DOCUMENT_TYPES.SELFIE, file)}
+                            onFileChange={(file: File) => setFieldValue(MANUAL_DOCUMENT_SELFIE, file)}
                         />
                         <Text size={isMobile ? 'sm' : 'xs'}>
                             Face forward and remove your glasses if necessary. Make sure your eyes are clearly visible
@@ -52,9 +51,7 @@ export const SelfieDocumentUpload = ({ formData, handleCancel, handleSubmit }: T
                             <Button onClick={handleCancel} type='button' variant='outlined'>
                                 Back
                             </Button>
-                            <Button disabled={!isValid || !values[MANUAL_DOCUMENT_TYPES.SELFIE]}>
-                                Confirm and upload
-                            </Button>
+                            <Button disabled={!isValid || !values[MANUAL_DOCUMENT_SELFIE]}>Confirm and upload</Button>
                         </div>
                     </div>
                 );

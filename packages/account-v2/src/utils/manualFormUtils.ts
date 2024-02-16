@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import {
-    MANUAL_DOCUMENT_TYPES,
+    MANUAL_DOCUMENT_SELFIE,
     MANUAL_DOCUMENT_TYPES_DATA,
     TManualDocumentTypes,
 } from '../constants/manualFormConstants';
@@ -41,9 +41,11 @@ export const getManualFormValidationSchema = (
     });
 };
 
+type Demo = Yup.InferType<ReturnType<typeof getManualFormValidationSchema>>;
+
 export const getSelfieValidationSchema = () => {
     return Yup.object({
-        [MANUAL_DOCUMENT_TYPES.SELFIE]: Yup.mixed<File | null>()
+        [MANUAL_DOCUMENT_SELFIE]: Yup.mixed<File | null>()
             .test({
                 message: 'File is required',
                 name: 'file',
@@ -52,5 +54,5 @@ export const getSelfieValidationSchema = () => {
                 },
             })
             .required(),
-    }).default(() => ({ [MANUAL_DOCUMENT_TYPES.SELFIE]: null }));
+    }).default(() => ({ [MANUAL_DOCUMENT_SELFIE]: null }));
 };
