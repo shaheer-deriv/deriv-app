@@ -1,56 +1,53 @@
 import React from 'react';
-import { Form, Formik, FormikValues } from 'formik';
-import { InferType } from 'yup';
+import { Form, Formik } from 'formik';
 import { Button } from '@deriv-com/ui';
-import { TManualDocumentTypes } from '../../constants/manualFormConstants';
+import { MANUAL_FORM_INITIAL_VALUES, TManualDocumentTypes } from '../../constants/manualFormConstants';
+import { useManualForm } from '../../hooks';
 import { getManualFormValidationSchema } from '../../utils/manualFormUtils';
 import { ManualFormDocumentUpload } from './manualFormDocumentUpload';
 import { ManualFormFooter } from './manualFormFooter';
 import { ManualFormInputs } from './manualFormInputs';
 
-type TManualDocumentDetailsForm = InferType<ReturnType<typeof getManualFormValidationSchema>>;
-
 type TManualFormProps = {
-    formData: FormikValues;
     onCancel: () => void;
-    onSubmit: (values: TManualDocumentDetailsForm) => void;
+    onSubmit: (values: typeof MANUAL_FORM_INITIAL_VALUES) => void;
     selectedDocument: TManualDocumentTypes;
 };
 
-export const ManualForm = ({ formData, onCancel, onSubmit, selectedDocument }: TManualFormProps) => {
-    const validationSchema = getManualFormValidationSchema(selectedDocument);
-
-    const initialValues = validationSchema.cast({
-        document_expiry: formData.document_expiry ?? validationSchema.getDefault().document_expiry,
-        document_number: formData.document_number ?? validationSchema.getDefault().document_number,
-    });
+export const ManualForm = ({ onCancel, onSubmit, selectedDocument }: TManualFormProps) => {
+    const { isExpiryDateRequired } = useManualForm();
 
     return (
-        <div className='m-400 p-800 border-100 border-solid rounded-400'>
-            <Formik
-                initialValues={initialValues as TManualDocumentDetailsForm}
-                onSubmit={onSubmit}
-                validationSchema={validationSchema}
-            >
-                {({ isValid, values }) => {
-                    console.log('Form values: ', values);
-                    return (
-                        <Form>
-                            <div className='flex flex-col gap-1200 max-w-[67rem]'>
-                                <ManualFormInputs selectedDocument={selectedDocument} />
-                                <ManualFormDocumentUpload selectedDocument={selectedDocument} />
-                                <ManualFormFooter />
-                                <div className='flex justify-end gap-800 bg-vp px-400 py-800 border-t-solid-grey-2 border-solid border-t-100'>
-                                    <Button onClick={onCancel} type='button' variant='outlined'>
-                                        Back
-                                    </Button>
-                                    <Button disabled={!isValid}>Next</Button>
-                                </div>
-                            </div>
-                        </Form>
-                    );
-                }}
-            </Formik>
-        </div>
+        <Formik
+            initialValues={MANUAL_FORM_INITIAL_VALUES}
+            onSubmit={onSubmit}
+            validationSchema={() => getManualFormValidationSchema(selectedDocument, isExpiryDateRequired)}
+        >
+            {({ isSubmitting, isValid }) => (
+                <Form>
+                    <div className='flex flex-col min-h-screen w-full'>
+                        <div className='flex flex-col gap-1200'>
+                            <ManualFormInputs selectedDocument={selectedDocument} />
+                            <ManualFormDocumentUpload selectedDocument={selectedDocument} />
+                            <ManualFormFooter />
+                        </div>
+                        <div className='sticky bottom-50 flex justify-end gap-800 bg-vp px-400 py-800 border-t-solid-grey-2 bg-solid-slate-50 border-solid border-t-100'>
+                            <Button
+                                disabled={isSubmitting}
+                                onClick={onCancel}
+                                size='lg'
+                                type='button'
+                                variant='outlined'
+                            >
+                                Back
+                            </Button>
+                            <Button disabled={!isValid || isSubmitting} size='lg'>
+                                Next
+                            </Button>
+                        </div>
+                    </div>
+                </Form>
+            )}
+        </Formik>
     );
 };
