@@ -25,21 +25,20 @@ export const getManualFormValidationSchema = (
     const fieldsConfig = getFieldsConfig(selectedDocument);
     const uploadConfig = getUploadConfig(selectedDocument);
 
-    const documentExpiryValidation = {
-        document_expiry: isExpiryDateRequired
-            ? Yup.string().required(fieldsConfig.documentExpiry.errorMessage)
-            : Yup.string(),
-    };
+    const documentExpiryValidation = Yup.object({
+        document_expiry: Yup.string().required(fieldsConfig.documentExpiry.errorMessage),
+    }).default(() => ({ document_expiry: '' }));
 
     const documentUploadValidation = Object.fromEntries(
-        uploadConfig.map(item => [item.pageType, Yup.string().required(item.error)])
+        uploadConfig.map(item => [item.pageType, Yup.string().required(item.error).default(null)])
     );
 
-    return Yup.object({
-        document_number: Yup.string().required(fieldsConfig.documentNumber.errorMessage).default('12'),
-        ...documentExpiryValidation,
+    const baseSchema = Yup.object().shape({
+        document_number: Yup.string().required(fieldsConfig.documentNumber.errorMessage),
         ...documentUploadValidation,
     });
+
+    return isExpiryDateRequired ? baseSchema.concat(documentExpiryValidation) : baseSchema;
 };
 
 export const getSelfieValidationSchema = () => {
